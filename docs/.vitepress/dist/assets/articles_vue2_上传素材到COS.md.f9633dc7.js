@@ -1,0 +1,1 @@
+import{_ as e,o as t,c as a}from"./chunks/framework.312978fa.js";const l=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"articles/vue2/上传素材到COS.md","filePath":"articles/vue2/上传素材到COS.md"}'),r={name:"articles/vue2/上传素材到COS.md"};function s(c,o,_,n,i,p){return t(),a("div")}const m=e(r,[["render",s]]);export{l as __pageData,m as default};
