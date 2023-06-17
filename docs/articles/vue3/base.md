@@ -107,6 +107,10 @@ export default {
 }
 ```
 
+### isRef
+
+检查一个值是否为一个 `ref` 对象
+
 ### reactive 函数
 
 * 定义引用类型的响应式数据，不可用于 jibenleixingshuju
@@ -144,6 +148,10 @@ export default {
 }
 ```
 
+### isReactive
+
+检查一个对象是否是由 `reactive` 创建的响应式代理
+
 ### ref VS reactive
 
 定义数据：
@@ -163,40 +171,9 @@ export default {
 * ref 定义数据，访问数据需要 `.value`，模板中不需要
 * reactive 定义的数据，都不需要
 
-### Vue3 响应式原理
+### isProxy
 
-* 通过 [Proxy](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy) 代理，拦截对对象属性的操作，包括增删改查
-* 通过 [Reflect](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Reflect) 反射，对源对象的属性进行操作
-
-```js
-let originPerson = {
-  name: 'Lily',
-  age: 22,
-}
-
-let person = new Proxy(originPerson, {
-  // 拦截增加和查询操作
-  get(target, prop) {
-    // 读取源对象的属性
-    return Reflect.get(originPerson, prop)
-  },
-  // 拦截修改操作
-  set(target, prop, value) {
-    // 修改源对象的属性
-    return Reflect.set(target, prop, value)
-  },
-  // 拦截删除操作
-  deleteProperty(target, prop) {
-    // 删除源对象的属性
-    return Reflect.deleteProperty(target, prop)
-  },
-})
-
-console.log(person.name)
-person.age = 33
-person.sex = 'unknown'
-delete person.age
-```
+检查一个对象是否是由 `reactive` 或者 `readonly` 方法创建的代理
 
 ### computed 函数
 
@@ -236,9 +213,7 @@ export default {
 
 ### watch 函数
 
-\:::tip Vue3 `watch` 能侦听的东西
-A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types
-\:::
+\:::tip Vue3 `watch` 能侦听的东西 A watch source can only be a getter/effect function, a ref, a reactive object, or an array of these types :::
 
 ```js
 import { ref, reactive, watch } from 'vue'
@@ -414,7 +389,7 @@ setup(){
 },
 ```
 
-### toRef 函数
+### toRef\&toRefs
 
 * 创建一个 RefImpl 实例对象，其 value 值指向另一个对象的某个属性，修改 value 值会修改源对象对应的属性
 * 应用：需要把响应式对象的某个属性单独提供给外部使用
@@ -495,6 +470,10 @@ setup() {
   }
 }
 ```
+
+### `isReadonly`
+
+检查一个对象是否是由 `readonly` 创建的只读代理
 
 ### toRaw & markRaw
 
@@ -577,8 +556,6 @@ export default {
 
 实现祖先组件与后代组件之间通信。
 
-![provide-inject](./images/provide-inject.png)
-
 ```js
 // 祖先组件传递数据
 import { provide, reactive, ref } from 'vue'
@@ -602,10 +579,3 @@ setup() {
   return { car, sum }
 }
 ```
-
-### 响应式数据的判断
-
-* `isRef`: 检查一个值是否为一个 `ref` 对象
-* `isReactive`: 检查一个对象是否是由 `reactive` 创建的响应式代理
-* `isReadonly`: 检查一个对象是否是由 `readonly` 创建的只读代理
-* `isProxy`: 检查一个对象是否是由 `reactive` 或者 `readonly` 方法创建的代理
