@@ -5,6 +5,7 @@ export default {
   themeConfig: {
       logo: "/images/logo.png", // 页面上显示的logo
       nav: [ // 页面右上角的导航
+          { text: "首页", link: "/" },
           { text: "vue2", link: "/articles/vue2/base" },
           { text: "vue3", link: "/articles/vue3/base" },
           { text: "ts", link: "/articles/ts/base" },
