@@ -1,1 +1,0 @@
-import{_ as e,o as t,c as s}from"./chunks/framework.312978fa.js";const d=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"articles/skills/vue.md","filePath":"articles/skills/vue.md"}'),a={name:"articles/skills/vue.md"};function r(c,o,i,l,n,p){return t(),s("div")}const m=e(a,[["render",r]]);export{d as __pageData,m as default};
