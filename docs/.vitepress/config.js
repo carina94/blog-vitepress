@@ -3,9 +3,9 @@ export default {
   description: 'carina94的个人博客', // 博客的介绍
   base: '/blog-vitepress/', // 如果想用 https://mlyz.wdy.github.io/blog/ 访问，那么这句话必填
   themeConfig: {
-      logo: "/images/logo.png", // 页面上显示的logo
+      // logo: "/images/logo.png", // 页面上显示的logo
       nav: [ // 页面右上角的导航
-          { text: "首页", link: "/" },
+          // { text: "首页", link: "/" },
           { text: "vue2", link: "/articles/vue2/base" },
           { text: "vue3", link: "/articles/vue3/base" },
           { text: "ts", link: "/articles/ts/base" },
