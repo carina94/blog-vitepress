@@ -8,7 +8,7 @@
     "dev": "vitepress dev docs --open",
     "build": "vitepress build docs",
     "serve": "vitepress serve docs",
-    "deploy": "./deploy.sh"
+    "deploy": "sh deploy.sh"
   },
   "keywords": [],
   "author": "",
