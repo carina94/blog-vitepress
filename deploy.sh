@@ -17,5 +17,6 @@ git commit -m 'deploy'
 
 git push -f git@github.com:carina94/blog-vitepress.git master:github-pages
 # git push -f git@github.com:你的git名/你的git项目名.git master:你的git分支
+git push -f git@gitee.com:carina94/blog-vitepress.git master:gh-pages
 
 cd -

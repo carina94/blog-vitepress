@@ -1,17 +1,54 @@
-home: true
-heroAlt: Logo image
-heroText: Welcome!
-tagline: Hero subtitle
-actionText: Get Started
-actionLink: /ts/basics
-features:
+---
+layout: home
 
-- title: Simplicity First
-    details: Minimal setup with markdown-centered project structure helps you focus on writing.
-- title: Vue-Powered
-    details: Enjoy the dev experience of Vue + webpack, use Vue components in markdown, and develop custom themes with Vue.
-- title: Performant
-    details: VitePress generates pre-rendered static HTML for each page, and runs as an SPA once a page is loaded.
-footer: MIT Licensed | Copyright © 2019-present Evan You
+hero:
+  name: 归来仍是少年C
+  text: 前端学习笔记
+  tagline: 愿你走出半生，归来仍是少年~
 
+# image
+
+# src: /logo.png
+
+# alt: Logo
+
+# actions
+
+# - theme: brand
+
+# text: Getting Started
+
+# link: /fe/html/html
+
+# - theme: alt
+
+# text: github.io
+
+# link: <https://brucecqm.github.io/bruceblogpages/>
+
+# - theme: alt
+
+# text: gitee.io
+
+# link: <https://brucecai55520.gitee.io/bruceblogpages/>
+
+# features
+
+# - icon: ⚡️
+
+# title: 前端知识
+
+# details: HTML、CSS、JavaScript、Vue、React
+
+# - icon: 📖
+
+# title: 计算机基础
+
+# details: 计算机网络、操作系统、数据结构
+
+# - icon: 🧰
+
+# title: 知也无涯
+
+# details: 面试题、资源导航
 ---
