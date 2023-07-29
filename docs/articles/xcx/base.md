@@ -349,11 +349,45 @@ JSON文件都是被包裹在一个大括号中 {}，通过key-value的方式来�
 
     `<view>` 和 `<block>` 在使用场景上也有一些差异，`<view>` 更适合用于布局容器，比如页面的主要结构、列表的项等；而 `<block>` 更适合用于临时包裹一些元素，比如在一个条件判断中，将一些元素作为一个整体进行包裹等。
 
+**数据绑定**
+
+    <!--wxml-->
+    <view> {{message}} </view>
+    // page.js
+    Page({
+      data: {
+        message: 'Hello MINA!'
+      }
+    })
+
 **条件渲染**
 
 `wx:if` 条件渲染标签，实现根据条件显示不同内容的效果。还可以使用 `wx:else` 标签来实现条件判断的 `else` 分支。
 
+    <view wx:if="{{view == 'WEBVIEW'}}"> WEBVIEW </view>
+    <view wx:elif="{{view == 'APP'}}"> APP </view>
+    <view wx:else="{{view == 'MINA'}}"> MINA </view>
+    // page.js
+    Page({
+      data: {
+        view: 'MINA'
+      }
+    })
+
+**列表渲染**
+
 `wx:for` 列表渲染标签，实现根据数据循环渲染列表的效果。
+
+```
+ <view wx:for="{{array}}"> {{item}} </view>
+// page.js
+Page({
+  data: {
+    array: [1, 2, 3, 4, 5]
+  }
+})
+
+```
 
 ## wxss
 
@@ -362,11 +396,9 @@ WXSS（WeiXin Style Sheets）是小程序的样式语言，用于控制小程序
 CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 * 支持尺寸单位 `rpx`，可以根据屏幕宽度自动缩放。由于换算采用的浮点数运算，所以运算结果会和预期结果有一点点偏差；
-* 支持导入外部样式文件，可以使用 `@import` 关键字；
+* 支持导入外部样式文件，可以使用 `@import` 关键字。`@import`后跟导入的外联样式表的相对路径；
 * 支持样式继承，可以使用 `inherit` 和 `initial` 值；
-* 支持全局样式覆盖，可以使用 `!important` 关键字。
-
-<!---->
+* 支持全局样式覆盖，可以使用 `!important` 关键字。定义在 app.wxss 中的样式为全局样式，作用于每一个页面。在 page 的 wxss 文件中定义的样式为局部样式，只作用在对应的页面，并会覆盖 app.wxss 中相同的选择器。
 
     /**index.wxss**/
     .userinfo {
@@ -392,7 +424,11 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 **rpx**
 
-## js
+可以根据屏幕宽度进行自适应。规定屏幕宽为750rpx。
+
+如在 iPhone6 上，屏幕宽度为375px，共有750个物理像素，则750rpx = 375px = 750物理像素，1rpx = 0.5px = 1物理像素。
+
+## wxs
 
 在小程序里边，我们就通过编写 `JS` 脚本文件来处理用户的操作。此外你还可以在 JS 中调用小程序提供的丰富的 API，利用这些 API 可以很方便的调起微信提供的能力，例如获取用户信息、本地存储、微信支付等。
 
@@ -411,6 +447,140 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
       }
     })
 
+**双向绑定**
+
+    <input model:value="{{value}}" />
+    如果输入框的值被改变了， this.data.value 也会同时改变。同时WXML 中所有绑定了 value 的位置也会被一同更新。
+    用于双向绑定的表达式有如下限制：只能是一个单一字段的绑定。不能是表达式，文字拼接及data.a这种语法。
+
+**JavaScript 支持情况**
+
+* 不支持使用 `eval` 执行 JS 代码
+* 不支持使用 `new Function` 创建函数
+
+## behaviors
+
+## Component 构造器构造页面
+
+## 生命周期
+
+## 路由跳转
+
+使用 `getCurrentPages()` 函数获取当前页面栈。
+
+    打开新页面 调用 API wx.navigateTo   路由前页面onHide。 路由后页面onLoad, onShow
+    页面重定向 调用 API wx.redirectTo  路由前页面onUnload。 路由后页面onLoad, onShow
+    页面返回 调用 API wx.navigateBack   路由前页面onUnload。 路由后页面 onShow
+    Tab 切换 调用 API wx.switchTab
+    重启动 调用 API wx.reLaunch    路由前页面onUnload。 路由后页面onLoad, onShow
+
+注意:
+
+* `navigateTo`, `redirectTo` 只能打开非 tabBar 页面。
+* `switchTab` 只能打开 tabBar 页面。
+* `reLaunch` 可以打开任意页面。
+* 页面底部的 tabBar 由页面决定，即只要是定义为 tabBar 的页面，底部都有 tabBar。
+* 调用页面路由带的参数可以在目标页面的`onLoad`中获取。
+
+## 页面组件传参
+
+<https://blog.csdn.net/jackyocheung/article/details/106133419>
+
+## 事件
+
+事件可以将用户的行为反馈到逻辑层进行处理。事件可以绑定在组件上，当达到触发事件，就会执行逻辑层中对应的事件处理函数。
+
+    <view id="tapTest" data-hi="Weixin" bindtap="tapName"> Click me! </view>
+
+    Page({
+      tapName: function(event) {
+        console.log(event)
+      }
+    })
+    获取id的值： event.target.id
+    获取hi的值： event.target.dataset.hi
+
+事件绑定使用bind。除 `bind` 外，也可以用 `catch` 来绑定事件。与 `bind` 不同， `catch` 会阻止事件向上冒泡。除 `bind` 和 `catch` 外，还可以使用 `mut-bind` 来绑定事件。一个 `mut-bind` 触发后，如果事件冒泡到其他节点上，其他节点上的 `mut-bind` 绑定函数不会被触发，但 `bind` 绑定函数和 `catch` 绑定函数依旧会被触发。
+
+事件分为冒泡事件和非冒泡事件：
+
+1. 冒泡事件：当一个组件上的事件被触发后，该事件会向父节点传递。
+2. 非冒泡事件：当一个组件上的事件被触发后，该事件不会向父节点传递。
+
+常用冒泡事件：tap，longpress(longtap),  touchstart, touchmove, touchcancel, touchend.
+
+## 模块化
+
+将一些公共的代码抽离成为一个单独的 js 文件，作为一个模块。模块只有通过 [`module.exports`](https://developers.weixin.qq.com/miniprogram/dev/reference/api/module.html) 或者 `exports` 才能对外暴露接口。
+
+在 JavaScript 文件中声明的变量和函数只在该文件中有效；不同的文件中可以声明相同名字的变量和函数，不会互相影响。
+
+```javascript
+// common.js
+function sayHello(name) {
+  console.log(`Hello ${name} !`)
+}
+function sayGoodbye(name) {
+  console.log(`Goodbye ${name} !`)
+}
+
+module.exports.sayHello = sayHello
+exports.sayGoodbye = sayGoodbye
+
+
+在需要使用这些模块的文件中，使用 require 将公共代码引入
+var common = require('common.js')
+Page({
+  helloMINA: function() {
+    common.sayHello('MINA')
+  },
+  goodbyeMINA: function() {
+    common.sayGoodbye('MINA')
+  }
+})
+```
+
+通过全局函数 `getApp` 可以获取全局的应用实例，如果需要全局的数据可以在 `App()` 中设置。
+
+    // app.js
+    App({
+      globalData: 1
+    })
+
+    // a.js
+    var localValue = 'a'
+    var app = getApp()
+    app.globalData++
+
+## 云开发 API
+
+开通并使用微信云开发，即可使用云开发API，在小程序端直接调用服务端的云函数。
+
+## 组件
+
+* 组件是视图层的基本组成单元。
+* 组件自带一些功能与微信风格一致的样式。
+* 一个组件通常包括 `开始标签` 和 `结束标签`，`属性` 用来修饰这个组件，`内容` 在两个标签之内。
+
+## 自定义组件
+
+## 插件
+
+## 运行机制
+
+小程序启动可以分为两种情况，一种是**冷启动**，一种是**热启动**。
+
+* 冷启动：如果用户首次打开，或小程序销毁后被用户再次打开，此时小程序需要重新加载启动，即冷启动。
+* 热启动：如果用户已经打开过某小程序，然后在一定时间内再次打开该小程序，此时小程序并未被销毁，只是从后台状态进入前台状态，这个过程就是热启动
+
+我们一般讲的「**启动**」专指冷启动，热启动一般被称为后台切前台。
+
+小程序启动后，界面被展示给用户，此时小程序处于「**前台**」状态。当用户「关闭」小程序时，小程序并没有真正被关闭，而是进入了「**后台**」状态，此时小程序还可以短暂运行一小段时间，但部分 API 的使用会受到限制。
+
+小程序进入「后台」状态一段时间后（目前是 5 秒），微信会停止小程序 JS 线程的执行，小程序进入「**挂起**」状态。此时小程序的内存状态会被保留，但开发者代码执行会停止，事件和接口回调会在小程序再次进入「前台」时触发。
+
+如果用户很久没有使用小程序（目前是 30 分钟），或者系统资源紧张，小程序会被「**销毁**」，即完全终止运行。
+
 # 传参场景
 
 <https://juejin.cn/post/7239539290536165413>
@@ -423,15 +593,9 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 * 小程序的运行环境分成渲染层和逻辑层。
 
-<!---->
-
 * WXML 模板和 WXSS 样式工作在渲染层，JS 脚本工作在逻辑层。
 
-<!---->
-
 * 小程序的渲染层和逻辑层分别由2个线程管理：渲染层的界面使用了WebView 进行渲染；逻辑层采用JsCore线程运行JS脚本。
-
-<!---->
 
 * 一个小程序存在多个界面，所以渲染层存在多个WebView线程，这两个线程的通信会经由微信客户端（Native代指微信客户端）做中转，逻辑层发送网络请求也经由Native转发至服务器。
 
@@ -439,19 +603,11 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 * 微信客户端在打开小程序之前，会把整个小程序的代码包下载到本地。
 
-<!---->
-
 * 通过 `app.json` 的 `pages` 字段就可以知道你当前小程序的所有页面路径。写在 `pages` 字段的第一个页面就是这个小程序的首页（打开小程序看到的第一个页面）。
-
-<!---->
 
 * 微信客户端把首页的代码装载进来，通过小程序底层的一些机制，渲染出这个首页。
 
-<!---->
-
 * 小程序启动后，在 `app.js` 定义的 `App` 实例的 `onLaunch` 回调方法会被执行。
-
-<!---->
 
 * 整个小程序只有一个 App 实例，是全部页面共享的。
 
