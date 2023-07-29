@@ -187,10 +187,11 @@ pages中页面的后缀：
 
 是当前小程序的全局配置，包括了小程序***所有页面路径***、***窗口外观、界面表现、底部tab等***。
 
-* `pages`：用来记录当前小程序所有页面的路径
-* `window`：全局定义小程序所有页面的背景色、文字颜色
-* `style`：全局定义小程序组件所使用样式的版本
-* `sitemapLocation`： 用来指明`sitemap.json`的位置
+* `pages`：用来记录当前小程序所有页面的路径.**小程序中新增/减少页面，都需要对 pages 数组进行修改。**
+* `window`：全局定义小程序所有页面的状态栏、导航条、标题、窗口背景色.
+* `style`：全局定义小程序组件所使用样式的版本.
+* tabBar: 底部 `tab` 栏的表现.包括背景色，文字，边框颜色等。其中 list 接受一个数组，**只能配置最少 2 个、最多 5 个 tab**。
+* `sitemapLocation`： 用来指明`sitemap.json`的位置.
 
 ```javascript
 {
@@ -274,7 +275,7 @@ pages中页面的后缀：
 
 ## sitemap.json
 
-微信现已开发小程序内搜索，效果类似于PC网页的SEO。 `sitemap.josn`文件用来**配置小程序页面是否允许被微信索引。**
+微信现已开发小程序内搜索，效果类似于PC网页的SEO。 `sitemap.josn`文件用来**配置小程序页面是否允许被微信索引。**当用户的搜索词条触发该索引时，小程序的页面将可能展示在搜索结果中。
 
 ```javascript
 {
@@ -432,22 +433,36 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 在小程序里边，我们就通过编写 `JS` 脚本文件来处理用户的操作。此外你还可以在 JS 中调用小程序提供的丰富的 API，利用这些 API 可以很方便的调起微信提供的能力，例如获取用户信息、本地存储、微信支付等。
 
-    //logs.js
-    var util = require('../../utils/util.js')
+    //index.js
     Page({
+    //页面的初始数据
       data: {
-        logs: []
+        text: "This is page data."
       },
-      onLoad: function () {
-        this.setData({
-          logs: (wx.getStorageSync('logs') || []).map(function (log) {
-            return util.formatTime(new Date(log))
-          })
-        })
-      }
+    //页面的组件选项，同 Component 构造器 中的 options
+      options:{ },
+    //类似于mixins和traits的组件间代码复用机制
+      behaviors:[]
+    // 生命周期回调—监听页面加载
+      onLoad: function(options) {},
+    //生命周期回调—监听页面显示
+      onShow: function() { },
+    //生命周期回调—监听页面初次渲染完成
+      onReady: function() {},
+    //生命周期回调—监听页面隐藏
+      onHide: function() { },
+    //生命周期回调—监听页面卸载
+      onUnload: function() {},
+    //监听用户下拉动作
+      onPullDownRefresh: function() {},
+    //页面上拉触底事件的处理函数
+      onReachBottom: function() {},
+    //用户点击右上角转发
+      onShareAppMessage: function () { },
+     .......
     })
 
-**双向绑定**
+### **双向绑定**
 
     <input model:value="{{value}}" />
     如果输入框的值被改变了， this.data.value 也会同时改变。同时WXML 中所有绑定了 value 的位置也会被一同更新。
@@ -458,15 +473,18 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 * 不支持使用 `eval` 执行 JS 代码
 * 不支持使用 `new Function` 创建函数
 
+### 生命周期
+
+```
+```
+
 ## behaviors
 
 ## Component 构造器构造页面
 
-## 生命周期
-
 ## 路由跳转
 
-使用 `getCurrentPages()` 函数获取当前页面栈。
+使用 `getCurrentPages()` 函数获取当前页面栈。数组中第一个元素为首页，最后一个元素为当前页面。
 
     打开新页面 调用 API wx.navigateTo   路由前页面onHide。 路由后页面onLoad, onShow
     页面重定向 调用 API wx.redirectTo  路由前页面onUnload。 路由后页面onLoad, onShow
@@ -481,6 +499,10 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 * `reLaunch` 可以打开任意页面。
 * 页面底部的 tabBar 由页面决定，即只要是定义为 tabBar 的页面，底部都有 tabBar。
 * 调用页面路由带的参数可以在目标页面的`onLoad`中获取。
+
+页面路由器对象。可以通过 `this.pageRouter` 或 `this.router` 获得当前页面或自定义组件的路由器对象。页面路由器有 `switchTab` `reLaunch` `redirectTo` `navigateTo` `navigateBack` 五个方法，与 wx 对象向同名的五个方法功能相同；唯一的区别是，页面路由器中的方法调用时，相对路径永远相对于 `this` 指代的页面或自定义组件。
+
+`this.pageRouter` 获得的路由器对象具有更好的基路径稳定性。通常用 `this.pageRouter.navigateTo` 代替 `wx.navigateTo` 是更优的。
 
 ## 页面组件传参
 
@@ -580,6 +602,10 @@ Page({
 小程序进入「后台」状态一段时间后（目前是 5 秒），微信会停止小程序 JS 线程的执行，小程序进入「**挂起**」状态。此时小程序的内存状态会被保留，但开发者代码执行会停止，事件和接口回调会在小程序再次进入「前台」时触发。
 
 如果用户很久没有使用小程序（目前是 30 分钟），或者系统资源紧张，小程序会被「**销毁**」，即完全终止运行。
+
+## 场景值
+
+场景值用来描述用户**进入小程序的路径**。开发者可以通过下列方式获取场景值：对于小程序，可以在 `App` 的 `onLaunch` 和 `onShow`，或[wx.getLaunchOptionsSync](https://developers.weixin.qq.com/miniprogram/dev/api/base/app/life-cycle/wx.getLaunchOptionsSync.html) 中获取场景值。返回来源信息的场景值（如是通过二维码扫描进入的小程序或者通过公众号链接进入的小程序等）。
 
 # 传参场景
 
