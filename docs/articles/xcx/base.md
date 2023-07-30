@@ -166,7 +166,8 @@ pages中页面的后缀：
 
 ## 页面新增
 
-只需要在根目录的`app.json`-> `pages`中新增页面的存放路径（ "pages/home/home"），小程序开发者工具即可帮我们自动创建对应的页面文件夹home及内部文件（home.json, home.js, home.wxss, home.wxml）。
+1. 在目录树上右键，选择新建 Page，将自动生成页面所需要的 `wxml`、`wxss`、`js`、`json`。
+2. 在 app.json 的 pages 字段，添加需要新建的页面的路径（ "pages/home/home"），将会自动生成该页面所需要的文件夹home及内部文件（home.json, home.js, home.wxss, home.wxml）
 
 ## 项目首页查看
 
@@ -350,18 +351,25 @@ JSON文件都是被包裹在一个大括号中 {}，通过key-value的方式来�
 
     `<view>` 和 `<block>` 在使用场景上也有一些差异，`<view>` 更适合用于布局容器，比如页面的主要结构、列表的项等；而 `<block>` 更适合用于临时包裹一些元素，比如在一个条件判断中，将一些元素作为一个整体进行包裹等。
 
-**数据绑定**
+### 数据绑定
 
     <!--wxml-->
     <view> {{message}} </view>
+    <view>{{"hello" + name}}</view>
+    <view id="item-{{id}}"> </view>
+    //特别注意：不要直接写 checked="false"，其计算结果是一个字符串，转成 boolean 类型后代表真值
+    <checkbox checked="{{false}}"> </checkbox>
+    <view hidden="{{flag ? true : false}}"> Hidden </view>
+
     // page.js
     Page({
       data: {
-        message: 'Hello MINA!'
+        message: 'Hello MINA!'，
+        id: 0
       }
     })
 
-**条件渲染**
+### 条件渲染
 
 `wx:if` 条件渲染标签，实现根据条件显示不同内容的效果。还可以使用 `wx:else` 标签来实现条件判断的 `else` 分支。
 
@@ -375,20 +383,71 @@ JSON文件都是被包裹在一个大括号中 {}，通过key-value的方式来�
       }
     })
 
-**列表渲染**
+**`wx:if` vs `hidden`**
+
+因为 `wx:if` 之中的模板也可能包含数据绑定，所以当 `wx:if` 的条件值切换时，框架有一个局部渲染的过程，因为它会确保条件块在切换时销毁或重新渲染。相比之下，`hidden` 就简单的多，组件始终会被渲染，只是简单的控制显示与隐藏。
+
+### 列表渲染
 
 `wx:for` 列表渲染标签，实现根据数据循环渲染列表的效果。
 
-```
- <view wx:for="{{array}}"> {{item}} </view>
-// page.js
-Page({
-  data: {
-    array: [1, 2, 3, 4, 5]
-  }
-})
+如果列表中项目的位置会动态改变或者有新的项目添加到列表中,需要使用 `wx:key` 来指定列表中项目的唯一的标识符.
 
-```
+    //默认数组的当前项的下标变量名默认为 index，数组当前项的变量名默认为 item
+     <view wx:for="{{array}}">{{index}}-- {{item}} </view>
+    // page.js
+    Page({
+      data: {
+        array: [1, 2, 3, 4, 5]
+      }
+    })
+
+    //使用 wx:for-item 可以指定数组当前元素的变量名，使用 wx:for-index 可以指定数组当前下标的变量名：
+    <view wx:for="{{array}}" wx:for-index="idx" wx:for-item="itemName">
+      {{idx}}: {{itemName}}
+    </view>
+    Page({
+      data: {
+        array: [1, 2, 3, 4, 5]
+      }
+    })
+
+### 模板
+
+定义模板：使用 name 属性，作为模板的名字。然后在`<template/>`内定义代码片段，在不同的地方调用。
+
+使用模板：使用 is 属性，声明需要的使用的模板，然后将模板所需要的 data 传入。
+
+    <!--wxml-->
+    <template name="staffName">
+      <view>
+        FirstName: {{firstName}}, LastName: {{lastName}}
+      </view>
+    </template>
+
+    <template is="staffName" data="{{...staffA}}"></template>
+    <template is="staffName" data="{{...staffB}}"></template>
+
+    // page.js
+    Page({
+      data: {
+        staffA: {firstName: 'Hulk', lastName: 'Hu'},
+        staffB: {firstName: 'Shang', lastName: 'You'}
+      }
+    })
+
+
+    ====动态渲染不同模板：
+    <template name="odd">
+      <view> odd </view>
+    </template>
+    <template name="even">
+      <view> even </view>
+    </template>
+
+    <block wx:for="{{[1, 2, 3, 4, 5]}}">
+      <template is="{{item % 2 == 0 ? 'even' : 'odd'}}"/>
+    </block>
 
 ## wxss
 
@@ -433,6 +492,8 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 在小程序里边，我们就通过编写 `JS` 脚本文件来处理用户的操作。此外你还可以在 JS 中调用小程序提供的丰富的 API，利用这些 API 可以很方便的调起微信提供的能力，例如获取用户信息、本地存储、微信支付等。
 
+### page函数
+
     //index.js
     Page({
     //页面的初始数据
@@ -455,10 +516,12 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
       onUnload: function() {},
     //监听用户下拉动作
       onPullDownRefresh: function() {},
-    //页面上拉触底事件的处理函数
+    //页面上拉触底事件的处理函数*
       onReachBottom: function() {},
     //用户点击右上角转发
       onShareAppMessage: function () { },
+    //用户自定义事件
+     viewTap:(){}
      .......
     })
 
@@ -475,12 +538,89 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 ### 生命周期
 
-```
-```
+    //监听页面加载.页面加载时触发。一个页面只会调用一次，可以在 onLoad 的参数中获取打开当前页面路径中的参数:options.query
+      onlLoad()
+    //页面初次渲染完成时触发.一个页面只会调用一次，代表页面已经准备妥当，可以和视图层进行交互。
+      onReady()
+    //页面显示/切入前台时触发
+      onShow(),
+    //页面隐藏/切入后台时触发。 如 wx.navigateTo 或底部 tab 切换到其他页面，小程序切入后台等。
+      onHide(),
+    //页面卸载时触发
+      onUnload(),
 
-## behaviors
+### 页面事件处理函数
 
-## Component 构造器构造页面
+    //监听用户下拉刷新事件。需要在app.json的window选项中或页面配置中开启enablePullDownRefresh
+    onPullDownRefresh()
+    //监听用户上拉触底事件。可以在app.json的window选项中或页面配置中设置触发距onReachBottomDistance。
+    onReachBottom()
+    //监听用户滑动页面事
+    onPageScroll(Object object)
+    //监听用户点击页面内转发按钮（button 组件 open-type="share"）或右上角菜单“转发”按钮的行为，并自定义转发内容
+    onShareAppMessage(Object object)
+    //监听右上角菜单“分享到朋友圈”按钮的行为，并自定义分享内容。
+    onShareTimeline()
+
+### 组件事件处理函数
+
+    <view bindtap="viewTap"> click me </view>
+
+    Page({
+      viewTap: function() {
+        console.log('view tap')
+        console.log(this.route)//到当前页面的路径，类型为String。
+      }
+    })
+
+### setData
+
+`setData` 函数用于将数据从逻辑层发送到视图层（异步），同时改变对应的 `this.data` 的值（同步）。setData接收两个参数，一个是Object类型，表示要改变的数据，`Object` 以 `key: value` 的形式表示，将 `this.data` 中的 `key` 对应的值改变成 `value`；一个是Function类型，表示setData引起的界面更新渲染完毕后的回调函数。
+
+    <!--index.wxml-->
+    <view>{{text}}</view>
+    <button bindtap="changeText"> Change normal data </button>
+
+    // index.js
+    Page({
+      data: {
+        text: 'init data',
+        num: 0,
+        array: [{text: 'init data'}],
+        object: {
+          text: 'init data'
+        }
+      },
+      changeText: function() {
+        this.setData({
+          text: 'changed data'
+        })
+      },
+      changeItemInArray: function() {
+        // 对于对象或数组字段，可以直接修改一个其下的子字段，这样做通常比修改整个对象或数组更好
+        this.setData({
+          'array[0].text':'changed data'
+        })
+      },
+      changeItemInObject: function(){
+        this.setData({
+          'object.text': 'changed data'
+        });
+      },
+      addNewField: function() {
+        this.setData({
+         //一个之前不存在的data中的数据
+          'newField.text': 'new data'
+        })
+      }
+    })
+
+**注意：**
+
+1. **直接修改 this.data 而不调用 this.setData 是无法改变页面的状态的，还会造成数据不一致**。
+2. 仅支持设置可 JSON 化的数据。
+3. 单次设置的数据不能超过1024kB，请尽量避免一次设置过多的数据。
+4. 请不要把 data 中任何一项的 value 设为 `undefined` ，否则这一项将不被设置并可能遗留一些潜在问题。
 
 ## 路由跳转
 
@@ -533,7 +673,7 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 ## 模块化
 
-将一些公共的代码抽离成为一个单独的 js 文件，作为一个模块。模块只有通过 [`module.exports`](https://developers.weixin.qq.com/miniprogram/dev/reference/api/module.html) 或者 `exports` 才能对外暴露接口。
+将一些公共的代码抽离成为一个单独的 js 文件，作为一个模块。模块只有通过 [`module.exports`](https://developers.weixin.qq.com/miniprogram/dev/reference/api/module.html) 或者 `exports` 才能对外暴露接口，exports是module.exports 的引用。使用require引入模块。
 
 在 JavaScript 文件中声明的变量和函数只在该文件中有效；不同的文件中可以声明相同名字的变量和函数，不会互相影响。
 
@@ -584,7 +724,64 @@ Page({
 * 组件自带一些功能与微信风格一致的样式。
 * 一个组件通常包括 `开始标签` 和 `结束标签`，`属性` 用来修饰这个组件，`内容` 在两个标签之内。
 
-## 自定义组件
+### Component自定义组件
+
+    Component({
+      // 属性定义。组件的对外属性，是属性名到属性设置的映射表
+      properties: {
+        myProperty: { // 属性名
+          type: String,
+          value: ''
+        },
+        myProperty2: String // 简化的定义方式
+      },
+      //组件的内部数据，和 properties 一同用于组件的模板渲染
+      data: {},
+      //组件数据字段监听器，用于监听 properties 和 data 的变化
+      observers:{},
+      //类似于mixins和traits的组件间代码复用机制
+      behaviors:String|Array
+     //----组件生命周期声明对象----
+      lifetimes: {
+        // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
+        attached: function () { },
+        moved: function () { },
+        detached: function () { },
+      },
+      // 组件生命周期函数，可以为函数，或一个在methods段中定义的方法名.
+      created:function(){},//组件生命周期函数-在组件实例刚刚被创建时执行，注意此时不能调用 setData.
+      attached: function () { }, // 此处attached的声明会被lifetimes字段中的声明覆盖.组件生命周期函数-在组件实例进入页面节点树时执行.
+      ready: function() { },//组件生命周期函数-在组件布局完成后执行.
+      moved: function () { },//组件生命周期函数-在组件实例被移动到节点树另一个位置时执行.
+      detached: function () { },//组件生命周期函数-在组件实例被从页面节点树移除时执行.
+      // 组件所在页面的生命周期函数
+      pageLifetimes: {
+        show: function () { },
+        hide: function () { },
+        resize: function () { },
+      },
+     //组件的方法，包括事件响应函数和任意的自定义方法.
+      methods: {
+        onMyButtonTap: function(){
+          this.setData({
+            // 更新属性和数据的方法与更新页面数据的方法类似
+          })
+        },
+        // 内部方法建议以下划线开头
+        _myPrivateMethod: function(){
+          // 这里将 data.A[0].B 设为 'myPrivateData'
+          this.setData({
+            'A[0].B': 'myPrivateData'
+          })
+        },
+        _propertyChange: function(newVal, oldVal) {
+
+        }
+      }
+
+    })
+
+### behaviors
 
 ## 插件
 
