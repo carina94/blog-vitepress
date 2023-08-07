@@ -276,7 +276,7 @@ pages中页面的后缀：
 
 ## sitemap.json
 
-微信现已开发小程序内搜索，效果类似于PC网页的SEO。 `sitemap.josn`文件用来**配置小程序页面是否允许被微信索引。**当用户的搜索词条触发该索引时，小程序的页面将可能展示在搜索结果中。
+微信现已开发小程序内搜索，效果类似于PC网页的SEO。 `sitemap.josn`文件用来\*\*配置小程序页面是否允许被微信索引。\*\*当用户的搜索词条触发该索引时，小程序的页面将可能展示在搜索结果中。
 
 ```javascript
 {
@@ -361,6 +361,17 @@ JSON文件都是被包裹在一个大括号中 {}，通过key-value的方式来�
     <checkbox checked="{{false}}"> </checkbox>
     <view hidden="{{flag ? true : false}}"> Hidden </view>
 
+
+    //*****静态类名和动态类名叠加 class="classic-img {{playing?'rotation':''}}"
+    <view class="container" hidden="{{hidden}}" >
+        <image class="classic-img {{playing?'rotation':''}}" src="{{img}}" />
+        <image class="player-img" bind:tap="onPlay"
+            src="{{!playing?playSrc:pauseSrc}}" />
+        <image class="tag" src="images/music@tag.png" />
+        <text class="content">{{content}}</text>
+    </view>
+
+
     // page.js
     Page({
       data: {
@@ -393,24 +404,33 @@ JSON文件都是被包裹在一个大括号中 {}，通过key-value的方式来�
 
 如果列表中项目的位置会动态改变或者有新的项目添加到列表中,需要使用 `wx:key` 来指定列表中项目的唯一的标识符.
 
-    //默认数组的当前项的下标变量名默认为 index，数组当前项的变量名默认为 item
-     <view wx:for="{{array}}">{{index}}-- {{item}} </view>
-    // page.js
-    Page({
-      data: {
-        array: [1, 2, 3, 4, 5]
-      }
-    })
+```
+//默认数组的当前项的下标变量名默认为 index，数组当前项的变量名默认为 item
+ <view wx:for="{{array}}">{{index}}-- {{item}} </view>
+// page.js
+Page({
+  data: {
+    array: [1, 2, 3, 4, 5]
+  }
+})
 
-    //使用 wx:for-item 可以指定数组当前元素的变量名，使用 wx:for-index 可以指定数组当前下标的变量名：
-    <view wx:for="{{array}}" wx:for-index="idx" wx:for-item="itemName">
-      {{idx}}: {{itemName}}
-    </view>
-    Page({
-      data: {
-        array: [1, 2, 3, 4, 5]
-      }
-    })
+//使用 wx:for-item 可以指定数组当前元素的变量名，使用 wx:for-index 可以指定数组当前下标的变量名：
+<view wx:for="{{array}}" wx:for-index="idx" wx:for-item="itemName">
+  {{idx}}: {{itemName}}
+</view>
+Page({
+  data: {
+    array: [1, 2, 3, 4, 5]
+  }
+})
+
+
+/key表示每项的唯一性，直接使用item中的id值表示唯一，并且在书写的时候不要带上item，wx:key="id"
+<block wx:key="id" wx:for="{{books}}">
+   <v-book book="{{item}}" />
+</block>
+
+```
 
 ### 模板
 
@@ -460,33 +480,40 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 * 支持样式继承，可以使用 `inherit` 和 `initial` 值；
 * 支持全局样式覆盖，可以使用 `!important` 关键字。定义在 app.wxss 中的样式为全局样式，作用于每一个页面。在 page 的 wxss 文件中定义的样式为局部样式，只作用在对应的页面，并会覆盖 app.wxss 中相同的选择器。
 
+    ```
     /**index.wxss**/
-    .userinfo {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    }
+        .userinfo {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        }
 
-    .userinfo-avatar {
-    width: 128rpx;
-    height: 128rpx;
-    margin: 20rpx;
-    border-radius: 50%;
-    }
+        .userinfo-avatar {
+        width: 128rpx;
+        height: 128rpx;
+        margin: 20rpx;
+        border-radius: 50%;
+        }
 
-    .userinfo-nickname {
-    color: #aaa;
-    }
+        .userinfo-nickname {
+        color: #aaa;
+        }
 
-    .usermotto {
-    margin-top: 200px;
-    }
+        .usermotto {
+        margin-top: 200px;
+        }
+
+
+    ```
 
 **rpx**
 
 可以根据屏幕宽度进行自适应。规定屏幕宽为750rpx。
 
 如在 iPhone6 上，屏幕宽度为375px，共有750个物理像素，则750rpx = 375px = 750物理像素，1rpx = 0.5px = 1物理像素。
+
+**自定义组件的外部样式覆盖组件内部样式**
+externalClasses:\['tag-class'],
 
 ## wxs
 
@@ -538,6 +565,7 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 
 ### 生命周期
 
+    页面生命周期
     //监听页面加载.页面加载时触发。一个页面只会调用一次，可以在 onLoad 的参数中获取打开当前页面路径中的参数:options.query
       onlLoad()
     //页面初次渲染完成时触发.一个页面只会调用一次，代表页面已经准备妥当，可以和视图层进行交互。
@@ -548,6 +576,15 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
       onHide(),
     //页面卸载时触发
       onUnload(),
+
+
+    组件生命周期
+      attached: function() {
+        // 在组件实例进入页面节点树时执行
+      },
+      detached: function() {
+        // 在组件实例被从页面节点树移除时执行
+      },
 
 ### 页面事件处理函数
 
@@ -591,7 +628,10 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
           text: 'init data'
         }
       },
-      changeText: function() {
+     //methods中访问data的数据：this.data.text
+     //methods中访问properies的数据：this.properies.num
+     methods:{
+        changeText: function() {
         this.setData({
           text: 'changed data'
         })
@@ -613,6 +653,9 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
           'newField.text': 'new data'
         })
       }
+
+     }
+
     })
 
 **注意：**
@@ -621,6 +664,32 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 2. 仅支持设置可 JSON 化的数据。
 3. 单次设置的数据不能超过1024kB，请尽量避免一次设置过多的数据。
 4. 请不要把 data 中任何一项的 value 设为 `undefined` ，否则这一项将不被设置并可能遗留一些潜在问题。
+
+### slot
+
+    //slot="after"  子组件标签中定义插槽
+     <v-tag tag-class="{{tool.highlight(index)}}" text="{{item.content}}">
+        <text class="num" slot="after">{{'+'+item.nums}}</text>
+     </v-tag>
+
+
+    //multipleSlots: true  启用插槽
+    Component({
+      options: {
+        multipleSlots: true,//启用插槽
+      },
+      externalClasses:['tag-class'],
+      properties: {
+        text: String
+      },
+    })
+
+    // <slot name="before"> 子组件内部使用插槽
+    <view bind:tap="onTap" class="container tag-class ">
+        <slot name="before"></slot>
+        <text >{{text}}</text>
+        <slot name="after"></slot>
+    </view>
 
 ## 路由跳转
 
@@ -766,6 +835,10 @@ Page({
           this.setData({
             // 更新属性和数据的方法与更新页面数据的方法类似
           })
+        //使用properties中的数据：this.properties.like
+        //使用data中的数据： this.data.num
+
+
         },
         // 内部方法建议以下划线开头
         _myPrivateMethod: function(){
@@ -780,6 +853,22 @@ Page({
       }
 
     })
+
+### properties
+
+    组件的属性列表
+     properties: {
+        myProperty: { // 属性名
+          type: String, //类型 ，必填
+          value: ''  // 选填
+        },
+        myProperty2: String // 简化的定义方式
+      },
+
+    在wxml中使用properties的数据和data中的数据使用方式一致
+    在js中使用properties的数据：this.properties.like
+
+    properties是外部父组件传入的值，子组件不应该修改properties，应该复制properties到data中再来操作。
 
 ### behaviors
 
@@ -803,6 +892,12 @@ Page({
 ## 场景值
 
 场景值用来描述用户**进入小程序的路径**。开发者可以通过下列方式获取场景值：对于小程序，可以在 `App` 的 `onLaunch` 和 `onShow`，或[wx.getLaunchOptionsSync](https://developers.weixin.qq.com/miniprogram/dev/api/base/app/life-cycle/wx.getLaunchOptionsSync.html) 中获取场景值。返回来源信息的场景值（如是通过二维码扫描进入的小程序或者通过公众号链接进入的小程序等）。
+
+## 编译模式
+
+普通编译:只要点击，则每次都从app.json中设置的首页中重新编译此项目
+
+自定义编译：设置自定义编译，如默认就在书籍详情页面，设置页面的路径，该页面需要的参数然后自定义一个名称保存。
 
 # 传参场景
 
