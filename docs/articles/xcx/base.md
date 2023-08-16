@@ -12,8 +12,6 @@
 
 * 如果没有自己的小程序账号 可以使用测试appid做临时开发使用。
 
-## 云开发
-
 # **创建项目**
 
 我们需要通过开发者工具，来完成小程序创建和代码编辑。
@@ -515,7 +513,7 @@ CSS 语法和特性之外，WXSS 还有一些自己的特点和扩展。
 **自定义组件的外部样式覆盖组件内部样式**
 externalClasses:\['tag-class'],
 
-## wxs
+## js
 
 在小程序里边，我们就通过编写 `JS` 脚本文件来处理用户的操作。此外你还可以在 JS 中调用小程序提供的丰富的 API，利用这些 API 可以很方便的调起微信提供的能力，例如获取用户信息、本地存储、微信支付等。
 
@@ -552,248 +550,13 @@ externalClasses:\['tag-class'],
      .......
     })
 
-### **双向绑定**
-
-    <input model:value="{{value}}" />
-    如果输入框的值被改变了， this.data.value 也会同时改变。同时WXML 中所有绑定了 value 的位置也会被一同更新。
-    用于双向绑定的表达式有如下限制：只能是一个单一字段的绑定。不能是表达式，文字拼接及data.a这种语法。
-
-**JavaScript 支持情况**
-
-* 不支持使用 `eval` 执行 JS 代码
-* 不支持使用 `new Function` 创建函数
-
-### 生命周期
-
-    页面生命周期
-    //监听页面加载.页面加载时触发。一个页面只会调用一次，可以在 onLoad 的参数中获取打开当前页面路径中的参数:options.query
-      onlLoad()
-    //页面初次渲染完成时触发.一个页面只会调用一次，代表页面已经准备妥当，可以和视图层进行交互。
-      onReady()
-    //页面显示/切入前台时触发
-      onShow(),
-    //页面隐藏/切入后台时触发。 如 wx.navigateTo 或底部 tab 切换到其他页面，小程序切入后台等。
-      onHide(),
-    //页面卸载时触发
-      onUnload(),
-
-
-    组件生命周期
-      attached: function() {
-        // 在组件实例进入页面节点树时执行
-      },
-      detached: function() {
-        // 在组件实例被从页面节点树移除时执行
-      },
-
-### 页面事件处理函数
-
-    //监听用户下拉刷新事件。需要在app.json的window选项中或页面配置中开启enablePullDownRefresh
-    onPullDownRefresh()
-    //监听用户上拉触底事件。可以在app.json的window选项中或页面配置中设置触发距onReachBottomDistance。
-    onReachBottom()
-    //监听用户滑动页面事
-    onPageScroll(Object object)
-    //监听用户点击页面内转发按钮（button 组件 open-type="share"）或右上角菜单“转发”按钮的行为，并自定义转发内容
-    onShareAppMessage(Object object)
-    //监听右上角菜单“分享到朋友圈”按钮的行为，并自定义分享内容。
-    onShareTimeline()
-
-### 组件事件处理函数
-
-    <view bindtap="viewTap"> click me </view>
-
-    Page({
-      viewTap: function() {
-        console.log('view tap')
-        console.log(this.route)//到当前页面的路径，类型为String。
-      }
-    })
-
-### setData
-
-`setData` 函数用于将数据从逻辑层发送到视图层（异步），同时改变对应的 `this.data` 的值（同步）。setData接收两个参数，一个是Object类型，表示要改变的数据，`Object` 以 `key: value` 的形式表示，将 `this.data` 中的 `key` 对应的值改变成 `value`；一个是Function类型，表示setData引起的界面更新渲染完毕后的回调函数。
-
-    <!--index.wxml-->
-    <view>{{text}}</view>
-    <button bindtap="changeText"> Change normal data </button>
-
-    // index.js
-    Page({
-      data: {
-        text: 'init data',
-        num: 0,
-        array: [{text: 'init data'}],
-        object: {
-          text: 'init data'
-        }
-      },
-     //methods中访问data的数据：this.data.text
-     //methods中访问properies的数据：this.properies.num
-     methods:{
-        changeText: function() {
-        this.setData({
-          text: 'changed data'
-        })
-      },
-      changeItemInArray: function() {
-        // 对于对象或数组字段，可以直接修改一个其下的子字段，这样做通常比修改整个对象或数组更好
-        this.setData({
-          'array[0].text':'changed data'
-        })
-      },
-      changeItemInObject: function(){
-        this.setData({
-          'object.text': 'changed data'
-        });
-      },
-      addNewField: function() {
-        this.setData({
-         //一个之前不存在的data中的数据
-          'newField.text': 'new data'
-        })
-      }
-
-     }
-
-    })
-
-**注意：**
-
-1. **直接修改 this.data 而不调用 this.setData 是无法改变页面的状态的，还会造成数据不一致**。
-2. 仅支持设置可 JSON 化的数据。
-3. 单次设置的数据不能超过1024kB，请尽量避免一次设置过多的数据。
-4. 请不要把 data 中任何一项的 value 设为 `undefined` ，否则这一项将不被设置并可能遗留一些潜在问题。
-
-### slot
-
-    //slot="after"  子组件标签中定义插槽
-     <v-tag tag-class="{{tool.highlight(index)}}" text="{{item.content}}">
-        <text class="num" slot="after">{{'+'+item.nums}}</text>
-     </v-tag>
-
-
-    //multipleSlots: true  启用插槽
-    Component({
-      options: {
-        multipleSlots: true,//启用插槽
-      },
-      externalClasses:['tag-class'],
-      properties: {
-        text: String
-      },
-    })
-
-    // <slot name="before"> 子组件内部使用插槽
-    <view bind:tap="onTap" class="container tag-class ">
-        <slot name="before"></slot>
-        <text >{{text}}</text>
-        <slot name="after"></slot>
-    </view>
-
-## 路由跳转
-
-使用 `getCurrentPages()` 函数获取当前页面栈。数组中第一个元素为首页，最后一个元素为当前页面。
-
-    打开新页面 调用 API wx.navigateTo   路由前页面onHide。 路由后页面onLoad, onShow
-    页面重定向 调用 API wx.redirectTo  路由前页面onUnload。 路由后页面onLoad, onShow
-    页面返回 调用 API wx.navigateBack   路由前页面onUnload。 路由后页面 onShow
-    Tab 切换 调用 API wx.switchTab
-    重启动 调用 API wx.reLaunch    路由前页面onUnload。 路由后页面onLoad, onShow
-
-注意:
-
-* `navigateTo`, `redirectTo` 只能打开非 tabBar 页面。
-* `switchTab` 只能打开 tabBar 页面。
-* `reLaunch` 可以打开任意页面。
-* 页面底部的 tabBar 由页面决定，即只要是定义为 tabBar 的页面，底部都有 tabBar。
-* 调用页面路由带的参数可以在目标页面的`onLoad`中获取。
-
-页面路由器对象。可以通过 `this.pageRouter` 或 `this.router` 获得当前页面或自定义组件的路由器对象。页面路由器有 `switchTab` `reLaunch` `redirectTo` `navigateTo` `navigateBack` 五个方法，与 wx 对象向同名的五个方法功能相同；唯一的区别是，页面路由器中的方法调用时，相对路径永远相对于 `this` 指代的页面或自定义组件。
-
-`this.pageRouter` 获得的路由器对象具有更好的基路径稳定性。通常用 `this.pageRouter.navigateTo` 代替 `wx.navigateTo` 是更优的。
-
-## 页面组件传参
-
-<https://blog.csdn.net/jackyocheung/article/details/106133419>
-
-## 事件
-
-事件可以将用户的行为反馈到逻辑层进行处理。事件可以绑定在组件上，当达到触发事件，就会执行逻辑层中对应的事件处理函数。
-
-    <view id="tapTest" data-hi="Weixin" bindtap="tapName"> Click me! </view>
-
-    Page({
-      tapName: function(event) {
-        console.log(event)
-      }
-    })
-    获取id的值： event.target.id
-    获取hi的值： event.target.dataset.hi
-
-事件绑定使用bind。除 `bind` 外，也可以用 `catch` 来绑定事件。与 `bind` 不同， `catch` 会阻止事件向上冒泡。除 `bind` 和 `catch` 外，还可以使用 `mut-bind` 来绑定事件。一个 `mut-bind` 触发后，如果事件冒泡到其他节点上，其他节点上的 `mut-bind` 绑定函数不会被触发，但 `bind` 绑定函数和 `catch` 绑定函数依旧会被触发。
-
-事件分为冒泡事件和非冒泡事件：
-
-1. 冒泡事件：当一个组件上的事件被触发后，该事件会向父节点传递。
-2. 非冒泡事件：当一个组件上的事件被触发后，该事件不会向父节点传递。
-
-常用冒泡事件：tap，longpress(longtap),  touchstart, touchmove, touchcancel, touchend.
-
-## 模块化
-
-将一些公共的代码抽离成为一个单独的 js 文件，作为一个模块。模块只有通过 [`module.exports`](https://developers.weixin.qq.com/miniprogram/dev/reference/api/module.html) 或者 `exports` 才能对外暴露接口，exports是module.exports 的引用。使用require引入模块。
-
-在 JavaScript 文件中声明的变量和函数只在该文件中有效；不同的文件中可以声明相同名字的变量和函数，不会互相影响。
-
-```javascript
-// common.js
-function sayHello(name) {
-  console.log(`Hello ${name} !`)
-}
-function sayGoodbye(name) {
-  console.log(`Goodbye ${name} !`)
-}
-
-module.exports.sayHello = sayHello
-exports.sayGoodbye = sayGoodbye
-
-
-在需要使用这些模块的文件中，使用 require 将公共代码引入
-var common = require('common.js')
-Page({
-  helloMINA: function() {
-    common.sayHello('MINA')
-  },
-  goodbyeMINA: function() {
-    common.sayGoodbye('MINA')
-  }
-})
-```
-
-通过全局函数 `getApp` 可以获取全局的应用实例，如果需要全局的数据可以在 `App()` 中设置。
-
-    // app.js
-    App({
-      globalData: 1
-    })
-
-    // a.js
-    var localValue = 'a'
-    var app = getApp()
-    app.globalData++
-
-## 云开发 API
-
-开通并使用微信云开发，即可使用云开发API，在小程序端直接调用服务端的云函数。
-
-## 组件
+### component函数
 
 * 组件是视图层的基本组成单元。
 * 组件自带一些功能与微信风格一致的样式。
 * 一个组件通常包括 `开始标签` 和 `结束标签`，`属性` 用来修饰这个组件，`内容` 在两个标签之内。
 
-### Component自定义组件
+#### 自定义组件
 
     Component({
       // 属性定义。组件的对外属性，是属性名到属性设置的映射表
@@ -854,7 +617,7 @@ Page({
 
     })
 
-### properties
+#### properties
 
     组件的属性列表
      properties: {
@@ -870,7 +633,452 @@ Page({
 
     properties是外部父组件传入的值，子组件不应该修改properties，应该复制properties到data中再来操作。
 
-### behaviors
+    observers数据监听器:
+    数据监听器可以用于监听和响应任何属性和数据字段的变化.
+    properties: {
+      visible: {
+        type: Boolean,
+        value: false,
+        observer(val) {
+           val && this.initData()   // 此处当visible发生变化的时候 会触发initData
+        }
+      }
+    },
+    //数据监听器
+    observers: {
+      visible(val) {
+        console.log(val) // 这里会一直监听着的喔
+      }
+    },
+    methods: {
+      initData() {
+        // some code
+      }
+    }
+
+    如果在数据监听器函数中使用 setData 设置本身监听的数据字段，可能会导致死循环，需要特别留意。
+    数据监听器observers 和属性的 observer 相比，数据监听器更强大且通常具有更好的性能。
+
+#### behaviors
+
+<https://juejin.cn/post/6922030842663403527>
+
+behaviors是用于组件间代码共享的特性, 类似一些编程语言中的'mixin'。
+
+Page中不能使用behaviors、只能在Components中使用!!!!!! 故若遇到真想使用behaviors属性的页面, 试试把某块页面内容抽离成组件, 然后在组件中去使用它.
+
+**Behavior中写法同Component组件中的写法一致。**
+
+**behaviors是个数组, 因为我们可以引入多个behavior。**
+
+    //until中的behavior文件夹:pagination.js
+    const paginationBev = Behavior({
+         data: {
+            dataArray: [],
+            total: null,
+            noneResult: false,
+            loading:false
+        },
+        methods:{
+            setMoreData(dataArray) {
+                const tempArray = this.data.dataArray.concat(dataArray)
+                this.setData({
+                    dataArray: tempArray
+                })
+            },
+            isLocked() {
+                return this.data.loading ? true : false
+            },
+            locked() {
+                this.setData({
+                    loading: true
+                })
+            },
+            unLocked() {
+                this.setData({
+                    loading: false
+                })
+            },
+        }
+    })
+
+    export {
+        paginationBev
+    }
+
+
+    某页面search文件夹中：search.js
+    import {paginationBev} from '../behaviors/pagination.js'//引入
+
+    Component({
+    //注册
+     behaviors: [paginationBev],
+     properties: {
+        more: {
+          type: String,
+          observer: 'loadMore'
+        }
+      },
+      data: {
+        historyWords: [],
+        hotWords: [],
+        searching: false,
+        q: '',
+        loading: false,
+        loadingCenter: false
+      },
+
+      attached() {
+        this.setData({
+          historyWords: keywordModel.getHistory()
+        })
+
+        keywordModel.getHot().then(res => {
+          this.setData({
+            hotWords: res.hot
+          })
+        })
+      },
+
+       methods: {
+         loadMore() {
+          if (!this.data.q) {
+            return
+          }
+          if (this.isLocked()) { //使用behavior中的方法，直接this.XX
+            return
+          }
+          if (this.hasMore()) {
+            this.locked()  //使用behavior中的方法，直接this.XX
+            bookModel.search(this.getCurrentStart(), this.data.q)
+              .then(res => {
+                this.setMoreData(res.books)//使用behavior中的方法，直接this.XX
+                this.unLocked()
+              }, () => {
+                this.unLocked()
+              })
+          }
+        },
+      }
+
+    })
+
+### 双向绑定
+
+    <input model:value="{{value}}" />
+    如果输入框的值被改变了， this.data.value 也会同时改变。同时WXML 中所有绑定了 value 的位置也会被一同更新。
+    用于双向绑定的表达式有如下限制：只能是一个单一字段的绑定。不能是表达式，文字拼接及data.a这种语法。
+
+**JavaScript 支持情况**
+
+* 不支持使用 `eval` 执行 JS 代码
+* 不支持使用 `new Function` 创建函数
+
+### 生命周期
+
+    页面生命周期
+    //监听页面加载.页面加载时触发。一个页面只会调用一次，可以在 onLoad 的参数中获取打开当前页面路径中的参数:options.query
+      onlLoad()
+    //页面初次渲染完成时触发.一个页面只会调用一次，代表页面已经准备妥当，可以和视图层进行交互。
+      onReady()
+    //页面显示/切入前台时触发
+      onShow(),
+    //页面隐藏/切入后台时触发。 如 wx.navigateTo 或底部 tab 切换到其他页面，小程序切入后台等。
+      onHide(),
+    //页面卸载时触发
+      onUnload(),
+
+
+    组件生命周期
+      attached: function() {
+        // 在组件实例进入页面节点树时执行
+      },
+      detached: function() {
+        // 在组件实例被从页面节点树移除时执行
+      },
+
+### 页面与组件区别
+
+    1.json文件的差异
+    组件json，必须有component的配置项{"component":true}
+    页面json，允许为空
+
+    2.js文件的差异
+    组件js的构造函数是Component，组件的方法必须放在methods里面
+    Component({
+        properties: {},
+        data:{},
+        created(){},
+        attached(){},
+        ready(){},
+     methods:{
+    //页面中的方法
+          onLike(){},
+          onMessage(){},
+       }
+    })
+
+    页面js的构造函数为Page
+    Page({
+     data:{},
+        onLoad(){},
+        onReady(){},
+        onShow(){},
+    //页面中的方法
+        onLike(){},
+        onMessage(){},
+    })
+
+### 页面事件处理函数
+
+    //监听用户下拉刷新事件。需要在app.json的window选项中或页面配置中开启enablePullDownRefresh
+    onPullDownRefresh()
+    //监听用户上拉触底事件。可以在app.json的window选项中或页面配置中设置触发距onReachBottomDistance。
+    onReachBottom()
+    //监听用户滑动页面事
+    onPageScroll(Object object)
+    //监听用户点击页面内转发按钮（button 组件 open-type="share"）或右上角菜单“转发”按钮的行为，并自定义转发内容
+    onShareAppMessage(Object object)
+    //监听右上角菜单“分享到朋友圈”按钮的行为，并自定义分享内容。
+    onShareTimeline()
+
+### setData
+
+`setData` 函数用于将数据从逻辑层发送到视图层（异步），同时改变对应的 `this.data` 的值（同步）。setData接收两个参数，一个是Object类型，表示要改变的数据，`Object` 以 `key: value` 的形式表示，将 `this.data` 中的 `key` 对应的值改变成 `value`；一个是Function类型，表示setData引起的界面更新渲染完毕后的回调函数。
+
+    <!--index.wxml-->
+    <view>{{text}}</view>
+    <button bindtap="changeText"> Change normal data </button>
+
+    // index.js---组件
+    Component({
+      data: {
+        text: 'init data',
+        num: 0,
+        array: [{text: 'init data'}],
+        object: {
+          text: 'init data'
+        }
+      },
+     //methods中访问data的数据：this.data.text
+     //methods中访问properies的数据：this.properies.num
+     methods:{
+        changeText: function() {
+        this.setData({
+          text: 'changed data'
+        })
+      },
+      changeItemInArray: function() {
+        // 对于对象或数组字段，可以直接修改一个其下的子字段，这样做通常比修改整个对象或数组更好
+        this.setData({
+          'array[0].text':'changed data'
+        })
+      },
+      changeItemInObject: function(){
+        this.setData({
+          'object.text': 'changed data'
+        });
+      },
+      addNewField: function() {
+        this.setData({
+         //一个之前不存在的data中的数据
+          'newField.text': 'new data'
+        })
+      }
+     }
+    })
+
+
+
+    // index.js---页面
+    Page({
+      data: {
+        text: 'init data',
+      },
+      changeText: function() {
+        this.setData({
+          text: 'changed data'
+        })
+      },
+    })
+
+**注意：**
+
+1. **直接修改 this.data 而不调用 this.setData 是无法改变页面的状态的，还会造成数据不一致**。
+2. 仅支持设置可 JSON 化的数据。
+3. 单次设置的数据不能超过1024kB，请尽量避免一次设置过多的数据。
+4. 请不要把 data 中任何一项的 value 设为 `undefined` ，否则这一项将不被设置并可能遗留一些潜在问题。
+
+### slot
+
+    //slot="after"  子组件标签中定义插槽
+     <v-tag tag-class="{{tool.highlight(index)}}" text="{{item.content}}">
+        <text class="num" slot="after">{{'+'+item.nums}}</text>
+     </v-tag>
+
+
+    //multipleSlots: true  启用插槽
+    Component({
+      options: {
+        multipleSlots: true,//启用插槽
+      },
+      externalClasses:['tag-class'],
+      properties: {
+        text: String
+      },
+    })
+
+    // <slot name="before"> 子组件内部使用插槽
+    <view bind:tap="onTap" class="container tag-class ">
+        <slot name="before"></slot>
+        <text >{{text}}</text>
+        <slot name="after"></slot>
+    </view>
+
+### wxs
+
+WXS 与 JavaScript 是不同的语言，有自己的语法，并不和 JavaScript一致。不支持使用es6语法\*\*(要使用var定义).\*\*
+
+wxs相当于一个独立模块，相当于一个独立出来的module对象，通过module.exports向外暴露，在文件中引入即可使用。解决了在微信小程序中{{method(a,b)}}方法传值不触发的问题，在vue这样传值是可以的。可以用来解决多次if判断，利于代码优化提高复用性。**（类似于vue中的公共过滤器，可全局复用）**
+
+    .wxs文件定义：//不支持es6语法只能通过：进行暴露
+    var stateSet={
+      "0-1":"已完成",
+      "0-0":"待回访",
+      "1-1":"已回访且已复购",
+      "1-0":"已回访"
+    }
+    var filter = {
+      judgmentState: function (taskStatus,isRepurchase) {
+        var statu=taskStatus+"-"+isRepurchase
+        return(stateSet[statu])
+      }
+    }
+    module.exports = {
+    judgmentState: filter.judgmentState
+    }
+
+
+
+    wxml中引入使用
+    首行：<wxs module="getDate" src="./judgmentState.wxs"></wxs>
+
+    <view class="task-status-desc-{{item.taskStatus == 0 ? 'normal' : 'completed'}}">{{getDate.judgmentState(item.taskStatus,item.isRepurchase)}}</view>
+
+### 常见效果
+
+翻页
+
+<https://blog.csdn.net/abs1004/article/details/80415631>
+
+小程序之间互相跳转
+
+分享
+
+自定义授权button按钮组件样式（重写一个自定义组件）
+
+## 路由跳转
+
+使用 `getCurrentPages()` 函数获取当前页面栈。数组中第一个元素为首页，最后一个元素为当前页面。
+
+    打开新页面 调用 API wx.navigateTo   路由前页面onHide。 路由后页面onLoad, onShow
+    页面重定向 调用 API wx.redirectTo  路由前页面onUnload。 路由后页面onLoad, onShow
+    页面返回 调用 API wx.navigateBack   路由前页面onUnload。 路由后页面 onShow
+    Tab 切换 调用 API wx.switchTab
+    重启动 调用 API wx.reLaunch    路由前页面onUnload。 路由后页面onLoad, onShow
+
+注意:
+
+* `navigateTo`, `redirectTo` 只能打开非 tabBar 页面。
+* `switchTab` 只能打开 tabBar 页面。
+* `reLaunch` 可以打开任意页面。
+* 页面底部的 tabBar 由页面决定，即只要是定义为 tabBar 的页面，底部都有 tabBar。
+* 调用页面路由带的参数可以在目标页面的`onLoad`中获取。
+
+页面路由器对象。可以通过 `this.pageRouter` 或 `this.router` 获得当前页面或自定义组件的路由器对象。页面路由器有 `switchTab` `reLaunch` `redirectTo` `navigateTo` `navigateBack` 五个方法，与 wx 对象向同名的五个方法功能相同；唯一的区别是，页面路由器中的方法调用时，相对路径永远相对于 `this` 指代的页面或自定义组件。
+
+`this.pageRouter` 获得的路由器对象具有更好的基路径稳定性。通常用 `this.pageRouter.navigateTo` 代替 `wx.navigateTo` 是更优的。
+
+## 页面组件传参
+
+<https://blog.csdn.net/jackyocheung/article/details/106133419>
+
+<https://juejin.cn/post/7239539290536165413>
+
+## 事件
+
+事件可以将用户的行为反馈到逻辑层进行处理。事件可以绑定在组件上，当达到触发事件，就会执行逻辑层中对应的事件处理函数。
+
+    <view id="tapTest" data-hi="Weixin" bindtap="tapName"> Click me! </view>
+    <view bindtap="viewTap"> click me </view>
+
+    Page({
+      tapName: function(event) {
+        console.log(event)
+    //获取id的值： event.target.id
+    //获取hi的值： event.target.dataset.hi
+      },
+       viewTap: function() {
+        console.log('view tap')
+        console.log(this.route)//到当前页面的路径，类型为String。
+      }
+    })
+
+事件绑定使用bind。除 `bind` 外，也可以用 `catch` 来绑定事件。与 `bind` 不同， `catch` 会阻止事件向上冒泡。除 `bind` 和 `catch` 外，还可以使用 `mut-bind` 来绑定事件。一个 `mut-bind` 触发后，如果事件冒泡到其他节点上，其他节点上的 `mut-bind` 绑定函数不会被触发，但 `bind` 绑定函数和 `catch` 绑定函数依旧会被触发。
+
+事件分为冒泡事件和非冒泡事件：
+
+1. 冒泡事件：当一个组件上的事件被触发后，该事件会向父节点传递。
+2. 非冒泡事件：当一个组件上的事件被触发后，该事件不会向父节点传递。
+
+常用冒泡事件：tap，longpress(longtap),  touchstart, touchmove, touchcancel, touchend.
+
+## 模块化
+
+将一些公共的代码抽离成为一个单独的 js 文件，作为一个模块。模块只有通过 [`module.exports`](https://developers.weixin.qq.com/miniprogram/dev/reference/api/module.html) 或者 `exports` 才能对外暴露接口，exports是module.exports 的引用。使用require引入模块。
+
+在 JavaScript 文件中声明的变量和函数只在该文件中有效；不同的文件中可以声明相同名字的变量和函数，不会互相影响。
+
+```javascript
+// common.js
+function sayHello(name) {
+  console.log(`Hello ${name} !`)
+}
+function sayGoodbye(name) {
+  console.log(`Goodbye ${name} !`)
+}
+
+module.exports.sayHello = sayHello
+exports.sayGoodbye = sayGoodbye
+
+
+在需要使用这些模块的文件中，使用 require 将公共代码引入
+var common = require('common.js')
+Page({
+  helloMINA: function() {
+    common.sayHello('MINA')
+  },
+  goodbyeMINA: function() {
+    common.sayGoodbye('MINA')
+  }
+})
+```
+
+通过全局函数 `getApp` 可以获取全局的应用实例，如果需要全局的数据可以在 `App()` 中设置。
+
+    // app.js
+    App({
+      globalData: 1
+    })
+
+    // a.js
+    var localValue = 'a'
+    var app = getApp()
+    app.globalData++
+
+## 云开发 API
+
+开通并使用微信云开发，即可使用云开发API，在小程序端直接调用服务端的云函数。
 
 ## 插件
 
@@ -899,13 +1107,13 @@ Page({
 
 自定义编译：设置自定义编译，如默认就在书籍详情页面，设置页面的路径，该页面需要的参数然后自定义一个名称保存。
 
-# 传参场景
+# 使用npm安装插件
 
-<https://juejin.cn/post/7239539290536165413>
+<https://doc.mini.talelin.com/start/>
 
-# 授权登录功能
+# 授权登录流程
 
-<https://juejin.cn/post/7152038521497190431>
+<https://blog.csdn.net/weixin_46648362/article/details/110314528>
 
 # 小程序渲染流程解析
 
