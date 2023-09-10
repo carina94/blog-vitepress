@@ -1,8 +1,8 @@
-# Vue3
+### Vue3
 
 ## 常用 Composition API
 
-### setup
+#### setup
 
 * setup 是 Vue3 中一个新的配置项，值为函数
 * 组件中使用的数据、方法等都要配置在 setup 中

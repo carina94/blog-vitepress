@@ -79,7 +79,7 @@ export default {
 
       ],
       sidebar: { // 侧边栏，可以分组
-          "/articles/vue2/": [
+        "/articles/vue2/": [
               {
                   text: "基础",
                   items: [
@@ -106,8 +106,8 @@ export default {
                     //   },
                   ],
               },
-          ],
-          "/articles/vue3/": [
+        ],
+        "/articles/vue3/": [
             {
                 text: "基础",
                 items: [
@@ -131,7 +131,7 @@ export default {
             },
 
         ],
-          "/articles/uniapp/": [
+        "/articles/uniapp/": [
               {
                   text: "基础",
                   items: [
@@ -150,7 +150,22 @@ export default {
                     //   }
                   ],
               },
-          ],
+        ],
+        "/articles/react/": [
+            {
+                text: "react",
+                items: [
+                  {
+                      text: "react基础",
+                      link: "/articles/react/base",
+                  },
+                  {
+                      text: "react-router",
+                      link: "/articles/react/reactRouter",
+                  },
+                ],
+            },
+        ],
         //   "/articles/javaScript-core/": [
         //       {
         //           text: "基础",
@@ -190,8 +205,10 @@ export default {
         //       }
         //   ],
       },
+      outline: [2,5], // 标题深度，[2,3] 表示提取 h2 和 h3 标题
+      outlineTitle: '本页目录',  // 目录标题
       socialLinks: [
-        { icon: "github", link: "https://github.com/carina94" },// 可以连接到 github
+        // { icon: "github", link: "https://github.com/carina94" },// 可以连接到 github
         // { icon: { svg: juejinFavicon }, link: "https://juejin.cn/user/1978776660478990" },//掘金
         // { icon: { svg: CSDNFavicon }, link: "https://blog.csdn.net/github_38505702?type=blog" },//csdn
         // { icon: { svg: zhihuFavicon }, link: "https://www.zhihu.com/people/router-87" },//知乎
