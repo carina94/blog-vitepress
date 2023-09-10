@@ -36,11 +36,11 @@ export default {
           {
               text: '前端基础',
               items: [ // 可以配置成下拉
-                  { text: 'html/css', link: '/articles/htmlcss/1' },
-                  { text: 'javaScript', link: '/articles/js/1' },
-                  { text: 'es6', link: '/articles/es6/1' },
-                  { text: 'typeScript', link: '/articles/ts/base' },
-                  { text: 'git', link: '/articles/others/git' },
+                  // { text: 'html/css', link: '/articles/htmlcss/1' },
+                  // { text: 'javaScript', link: '/articles/js/1' },
+                  // { text: 'es6', link: '/articles/es6/1' },
+                  // { text: 'typeScript', link: '/articles/ts/base' },
+                  // { text: 'git', link: '/articles/others/git' },
               ]
           },
           {
@@ -56,7 +56,7 @@ export default {
           },
           {
             text: '项目学习',
-            items: [ // 可以配置成下拉
+            items: [
                 // { text: "vue2", link: "/articles/vue2/base" },
 
             ]
@@ -64,7 +64,7 @@ export default {
           {
             text: '服务端',
             items: [
-                { text: "express", link: "/articles/express/1" },
+                // { text: "express", link: "/articles/express/1" },
 
             ]
           },
@@ -81,75 +81,51 @@ export default {
       sidebar: { // 侧边栏，可以分组
         "/articles/vue2/": [
               {
-                  text: "基础",
+                  text: "vue2",
                   items: [
                     {
-                      text: "标题1",
+                      text: "vue2基础",
                       link: "/articles/vue2/base",
                     },
                     {
-                        text: "标题2",
-                        link: "/articles/vue2/base",
-                      },
+                        text: "vue-router",
+                        link: "/articles/vue2/vueRouter",
+                    },
+                    {
+                      text: "vuex",
+                      link: "/articles/vue2/vuex",
+                    },
+                    {
+                      text: "vue-cli",
+                      link: "/articles/vue2/vueCli",
+                    },
                   ],
               },
-              {
-                  text: "代码段",
-                  items: [
-                    //   {
-                    //       text: "上传素材到COS",
-                    //       link: "/articles/vue/上传素材到COS",
-                    //   },
-                    //   {
-                    //       text: "文件下载",
-                    //       link: "/articles/vue/文件下载",
-                    //   },
-                  ],
-              },
+
         ],
         "/articles/vue3/": [
             {
-                text: "基础",
+                text: "vue3",
                 items: [
                   {
-                      text: "标题1",
+                      text: "vue3基础",
                       link: "/articles/vue3/base",
-                    },
-                ],
-            },
-
-        ],
-        "/articles/ts/": [
-            {
-                text: "基础",
-                items: [
+                  },
                   {
-                      text: "标题1",
-                      link: "/articles/ts/base",
-                    },
+                    text: "vue3-router",
+                    link: "/articles/vue3/vue3Router",
+                  },
+                  {
+                    text: "pinia",
+                    link: "/articles/vue3/pinia",
+                  },
+                  {
+                    text: "vite",
+                    link: "/articles/vue3/vite",
+                  },
                 ],
             },
 
-        ],
-        "/articles/uniapp/": [
-              {
-                  text: "基础",
-                  items: [
-                    {
-                        text: "标题1",
-                        link: "/articles/uniapp/base",
-                      },
-                  ],
-              },
-              {
-                  text: "代码段",
-                  items: [
-                    //   {
-                    //       text: "一键登录",
-                    //       link: "/articles/uniapp/一键登录",
-                    //   }
-                  ],
-              },
         ],
         "/articles/react/": [
             {
@@ -166,44 +142,41 @@ export default {
                 ],
             },
         ],
-        //   "/articles/javaScript-core/": [
-        //       {
-        //           text: "基础",
-        //           items: [
-        //           {
-        //               text: "1. 构造函数、原型、原型链",
-        //               link: "/articles/javaScript-core/构造函数、原型、原型链",
-        //           },
-        //           {
-        //               text: "2. 执行上下文和执行上下文栈",
-        //               link: "/articles/javaScript-core/执行上下文和执行上下文栈",
-        //           },
-        //           {
-        //               text: "3. this的指向",
-        //               link: "/articles/javaScript-core/this的指向",
-        //           },
-        //           ],
-        //       },
-        //       {
-        //           text: "进阶",
-        //           items: [
-        //           {
-        //               text: "xx",
-        //               link: "/xx",
-        //           },
-        //           ],
-        //       },
-        //   ],
-        //   "/articles/libs/": [
-        //       {
-        //           items: [
-        //           {
-        //               text: "1. VForm3低代码初体验",
-        //               link: "/articles/libs/VForm3低代码初体验",
-        //           },
-        //           ],
-        //       }
-        //   ],
+        "/articles/ts/": [
+          {
+              text: "typeScript",
+              items: [
+                {
+                    text: "ts基础",
+                    link: "/articles/ts/base",
+                  },
+              ],
+          },
+
+      ],
+      "/articles/uniapp/": [
+            {
+                text: "uniapp",
+                items: [
+                  {
+                      text: "uniapp基础",
+                      link: "/articles/uniapp/base",
+                  },
+                ],
+            },
+      ],
+      "/articles/xcx/": [
+        {
+            text: "小程序",
+            items: [
+              {
+                  text: "小程序基础",
+                  link: "/articles/xcx/base",
+              },
+            ],
+        },
+      ],
+
       },
       outline: [2,5], // 标题深度，[2,3] 表示提取 h2 和 h3 标题
       outlineTitle: '本页目录',  // 目录标题
