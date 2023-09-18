@@ -139,6 +139,10 @@ export default {
                       text: "react-router",
                       link: "/articles/react/reactRouter",
                   },
+                  {
+                    text: "react-hooks",
+                    link: "/articles/react/reactHooks",
+                  },
                 ],
             },
         ],
